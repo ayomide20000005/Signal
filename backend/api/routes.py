@@ -5,19 +5,17 @@ from backend.processors.summarizer import generate_tweet
 
 router = APIRouter()
 
-@router.get("/feed")
-def get_feed():
+@router.get("/articles")
+def get_articles():
     articles = scrape_all_sources()
     ranked = rank_articles(articles)
-    results = []
-    for article in ranked:
-        tweet = generate_tweet(article)
-        results.append({
-            "source": article["source"],
-            "title": article["title"],
-            "link": article["link"],
-            "published": article["published"],
-            "score": article["score"],
-            "tweet": tweet
-        })
-    return results
+    return ranked
+
+@router.get("/tweet/{index}")
+def get_tweet(index: int):
+    articles = scrape_all_sources()
+    ranked = rank_articles(articles)
+    if index >= len(ranked):
+        return {"error": "index out of range"}
+    tweet = generate_tweet(ranked[index])
+    return {"tweet": tweet, "article": ranked[index]}
