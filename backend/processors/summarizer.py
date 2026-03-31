@@ -31,3 +31,29 @@ Write the tweet now:
         contents=prompt
     )
     return response.text.strip()
+
+
+def chat_with_articles(message, articles):
+    context = "\n\n".join([
+        f"Title: {a['title']}\nSource: {a['source']}\nSummary: {a['summary']}"
+        for a in articles
+    ])
+
+    prompt = f"""
+You are Signal, an AI news intelligence assistant that specializes in AI industry news.
+You have access to today's top AI news stories below.
+Use them to answer the user's question or generate content they ask for.
+Be sharp, concise and authoritative like a journalist who knows the space deeply.
+
+TODAY'S AI NEWS:
+{context}
+
+USER: {message}
+
+Respond now:
+"""
+    response = client.models.generate_content(
+        model="models/gemini-pro",
+        contents=prompt
+    )
+    return response.text.strip()

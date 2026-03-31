@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import axios from "axios"
 import TweetCard from "./TweetCard"
 
-export default function Feed() {
+export default function Feed({ onArticlesLoaded }) {
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
   const [tweets, setTweets] = useState({})
@@ -12,6 +12,7 @@ export default function Feed() {
     axios.get("http://localhost:8000/articles")
       .then(res => {
         setItems(res.data)
+        onArticlesLoaded(res.data)
         setLoading(false)
       })
       .catch(err => {
@@ -35,16 +36,39 @@ export default function Feed() {
 
   if (loading) return <div style={{ color: "#e7e9ea", padding: "20px" }}>Fetching signals...</div>
 
+  const grouped = items.reduce((acc, item, i) => {
+    const cat = item.category || "General"
+    if (!acc[cat]) acc[cat] = []
+    acc[cat].push({ ...item, index: i })
+    return acc
+  }, {})
+
   return (
     <div>
-      {items.map((item, i) => (
-        <TweetCard
-          key={i}
-          item={item}
-          tweet={tweets[i]}
-          generating={generating[i]}
-          onGenerate={() => generateTweet(i)}
-        />
+      {Object.entries(grouped).map(([category, articles]) => (
+        <div key={category} style={{ marginBottom: "24px" }}>
+          <h2 style={{
+            color: "#1d9bf0",
+            fontSize: "14px",
+            fontWeight: "bold",
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+            marginBottom: "12px",
+            borderBottom: "1px solid #2f3336",
+            paddingBottom: "6px"
+          }}>
+            {category}
+          </h2>
+          {articles.map((item) => (
+            <TweetCard
+              key={item.index}
+              item={item}
+              tweet={tweets[item.index]}
+              generating={generating[item.index]}
+              onGenerate={() => generateTweet(item.index)}
+            />
+          ))}
+        </div>
       ))}
     </div>
   )
