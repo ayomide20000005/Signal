@@ -1,12 +1,13 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import axios from "axios"
 import Feed from "./components/Feed"
 
 export default function App() {
-  const [articles, setArticles] = useState([])
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState("")
   const [thinking, setThinking] = useState(false)
+
+  const handleArticlesLoaded = useCallback(() => {}, [])
 
   const sendMessage = () => {
     if (!input.trim()) return
@@ -35,7 +36,7 @@ export default function App() {
         Signal ⚡
       </h1>
 
-      <Feed onArticlesLoaded={setArticles} />
+      <Feed onArticlesLoaded={handleArticlesLoaded} />
 
       <div style={{
         marginTop: "32px",

@@ -19,7 +19,7 @@ export default function Feed({ onArticlesLoaded }) {
         console.error(err)
         setLoading(false)
       })
-  }, [])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const generateTweet = (index) => {
     setGenerating(prev => ({ ...prev, [index]: true }))
