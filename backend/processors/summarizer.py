@@ -2,7 +2,7 @@ import google.genai as genai
 import os
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../.env'))
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -27,7 +27,7 @@ Source: {article['source']}
 Write the tweet now:
 """
     response = client.models.generate_content(
-        model="gemini-2.0-flash",
+        model="models/gemini-pro",
         contents=prompt
     )
     return response.text.strip()
